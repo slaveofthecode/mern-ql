@@ -1,10 +1,12 @@
 {
+  "type": "module",
   "name": "mongodb-express-node",
   "version": "1.0.0",
   "description": "NodeJs App with connection to MongoDB",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
   },
   "author": "slaveofthecode",
   "license": "ISC",
@@ -12,5 +14,8 @@
     "dotenv": "^16.3.2",
     "express": "^4.18.2",
     "mongoose": "^8.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
   }
 }
