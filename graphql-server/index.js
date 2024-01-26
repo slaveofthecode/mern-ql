@@ -153,6 +153,9 @@ const graphQLServer = new ApolloServer({
                     online: `${root.address.city}, ${root.address.country ?? ''}`
                 }
             }
+        },
+        Address: {
+            street: (root) => root.street ?? ''
         }
     },
     port: process.env.GRAPHQL_PORT
