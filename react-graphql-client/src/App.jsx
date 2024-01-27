@@ -28,7 +28,7 @@ export default App
 
 function GetAllComponent () {
 
-  const query = gql`
+  const queryGetAll = gql`
     query {
       getAll {
         id
@@ -43,7 +43,7 @@ function GetAllComponent () {
     }
   `;
 
-  const resultQuery = useQuery(query)
+  const resultGetAll = useQuery(queryGetAll)
 
   // REMOVE
   const mutationRemove = gql`
@@ -58,7 +58,7 @@ function GetAllComponent () {
     remove, 
     // { loading, error, data }
   ] = useMutation(mutationRemove, {
-    refetchQueries: [{ query }],
+    refetchQueries: [{ query: queryGetAll }],
     onError: (error) => { console.log('ERROR MUTATION', error)}
   });
 
@@ -77,12 +77,12 @@ function GetAllComponent () {
 
   return (
     <>
-      <h2>Get All <small>( {resultQuery.data?.getAll.length} )</small></h2>
-        { resultQuery.loading && <p>loading...</p> }
-        { resultQuery.error && <p>ERROR: {resultQuery.error.message} </p> }
+      <h2>Get All <small>( {resultGetAll.data?.getAll.length} )</small></h2>
+        { resultGetAll.loading && <p>loading...</p> }
+        { resultGetAll.error && <p>ERROR: {resultGetAll.error.message} </p> }
         {
-          resultQuery.data && (
-            resultQuery.data.getAll.map((pers) => {
+          resultGetAll.data && (
+            resultGetAll.data.getAll.map((pers) => {
               return (
                 <div key={pers.id} style={{
                   display: 'flex',
@@ -99,14 +99,15 @@ function GetAllComponent () {
             })
           )
         }
-        <UpdateComponent idPerson={idToUpdate} setIdToUpdate={setIdToUpdate} />        
+        { idToUpdate && <UpdateComponent idPerson={idToUpdate} setIdToUpdate={setIdToUpdate} /> }
+        
     </>
   );
 }
 
 function CreateComponent () {
 
-  const mutation = gql`
+  const mutationCreate = gql`
     mutation($person: PersonCreate!) {
       create(person: $person) { 
         id   
@@ -137,13 +138,14 @@ function CreateComponent () {
       error,
       data
     }
-  ] = useMutation(mutation, {
+  ] = useMutation(mutationCreate, {
     refetchQueries: [
       {
         query: queryGetAll
       }
     ],
-    onError: (error) => { console.log('ERROR CREATE', error)}
+    onError: (error) => { console.log('ERROR CREATE', error)},    
+    onCompleted: (data) => setDataUpdated(data)
   });
 
   const handleOnSubmit = async (evt) => {
@@ -185,6 +187,8 @@ function CreateComponent () {
 
   }
 
+  const [ dataUpdated, setDataUpdated] = useState(null);
+
   return (
     <>
       <h2>Create</h2>
@@ -215,9 +219,12 @@ function CreateComponent () {
             { loading ? 'loading...' : 'Add '}
           </button>
           { error && <p> {error.message } </p>}
-          { data && (
-            <p> { data.create.id } - { data.create.name } </p> 
-          )}
+          {
+            dataUpdated && ( () => {
+              setTimeout( () => { setDataUpdated(null); }, 5000);
+              return <p> { data.create.id } - { data.create.name } </p> 
+            } )()
+          }
         </form>
     </>
   );
@@ -241,21 +248,20 @@ function UpdateComponent ({ idPerson, setIdToUpdate }) {
     }
   `;
 
-  const [ personTpUpdate, setPersonTpUpdate ] = useState(null);
+  const [ personToUpdate, setPersonToUpdate ] = useState(null);
 
   const [
     getByID,
-    { data, loading }
-  ] = useLazyQuery(queryGetById);
+    // { data, loading }
+  ] = useLazyQuery(queryGetById, {
+    fetchPolicy: 'no-cache'
+  });
 
   const getByIdAsync = async () => {
     await getByID({
       variables: { id: idPerson }
-    }).then( (res) => {
-      console.log('RES', res?.data?.getById);
-      console.log('DAT', data?.getById);
-      console.log('LOD', loading);
-      setPersonTpUpdate({ ...res?.data?.getById });
+    }).then( (res) => {      
+      setPersonToUpdate({ ...res?.data?.getById });
     });
   }
 
@@ -263,7 +269,7 @@ function UpdateComponent ({ idPerson, setIdToUpdate }) {
     if (idPerson) 
       getByIdAsync();
 
-  }, [idPerson]);
+  }, []);
 
   const mutationUpdate = gql`
     mutation($updateId: ID!, $personToUpd: PersonUpdate) {
@@ -299,14 +305,12 @@ function UpdateComponent ({ idPerson, setIdToUpdate }) {
     onError: (error) => { console.log('ERROR CREATE', error)}
   });
 
-  if (!idPerson) return null;
-
   const handleOnChangeUpdate = (evt) => {
 
     const { name, value } = evt.target;
 
-    setPersonTpUpdate({
-      ...personTpUpdate,
+    setPersonToUpdate({
+      ...personToUpdate,
       [name]: value
     });
   }
@@ -316,9 +320,9 @@ function UpdateComponent ({ idPerson, setIdToUpdate }) {
       variables: { 
         updateId: idPerson,
         personToUpd: {
-          name: personTpUpdate.name,
-          age: parseInt(personTpUpdate.age),
-          email: personTpUpdate.email
+          name: personToUpdate.name,
+          age: parseInt(personToUpdate.age),
+          email: personToUpdate.email
         }
       }
     }).then(() => {
@@ -327,20 +331,26 @@ function UpdateComponent ({ idPerson, setIdToUpdate }) {
   }
 
   const handleOnClickCancelUpdate = () => {
-    setPersonTpUpdate(null);
+    setPersonToUpdate(null);
     setIdToUpdate(null);
   }
 
   return (
     <>
       <h2>Update</h2>
-      <ol>
-        <li>name : <input value={personTpUpdate?.name ?? ''} onChange={handleOnChangeUpdate} name='name' /></li>        
-        <li>age : <input value={personTpUpdate?.age ?? ''} onChange={handleOnChangeUpdate} name='age' /></li>
-        <li>email : <input value={personTpUpdate?.email ?? ''} onChange={handleOnChangeUpdate} name='email' /></li>                
-      </ol>
-      <button onClick={handleSaveUpdate} >✔</button>
-      <button onClick={handleOnClickCancelUpdate} >❌</button>
+      {
+        personToUpdate && (
+          <>
+            <ol>
+              <li>name : <input value={personToUpdate?.name ?? ''} onChange={handleOnChangeUpdate} name='name' /></li>        
+              <li>age : <input value={personToUpdate?.age ?? ''} onChange={handleOnChangeUpdate} name='age' /></li>
+              <li>email : <input value={personToUpdate?.email ?? ''} onChange={handleOnChangeUpdate} name='email' /></li>                
+            </ol>
+            <button onClick={handleSaveUpdate} >✔</button>
+            <button onClick={handleOnClickCancelUpdate} >❌</button>
+          </>  
+        )
+      }
     </>
   );
 

@@ -17,7 +17,7 @@
 - - run the command "npm install"
 - - run the command "npm run dev"
 
-## Take into account the following: ( BRANCH ")
+## Take into account the following: ( _BRANCH_ )
 
 [ master ] This branch contain the final stable version of the project.
 
