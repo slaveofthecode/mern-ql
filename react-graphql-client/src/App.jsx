@@ -1,67 +1,31 @@
 /* eslint-disable react/prop-types */
+import { useState } from 'react';
 import GridPersons from '../src/pages/GridPersons.jsx';
+import Create from './pages/Create.jsx';
+import Update from './pages/Update.jsx';
 
 import './App.css';
-import InputRadio from './components/commons/inputs/radio.jsx';
-import InputText from './components/commons/inputs/text.jsx';
  
 function App() {  
+
+  const [ idToUpdate, setIdToUpdate] = useState(null);
 
   return (
     <>
       <h1>React + GraphQL + Node</h1>
       <hr />
-      <div >
-        <h2 style={{ textAlign: 'start' }}>Create</h2>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'start',
-          gap: '10px'
-        }}>
-          <span style={{ display: 'block', width: '100px', textAlign:'end' }}>Main Data</span>
-          <InputText placeholder={'name'} name={'name'} />
-          <InputText placeholder={'age'} name={'age'} />
-          <InputText placeholder={'email'} name={'email'} />
-        </div>
-
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'start',
-          gap: '10px'
-        }}>
-          <span style={{ display: 'block', width: '100px', textAlign:'end' }}>Address</span>
-          <InputText placeholder='street' name='street' />
-          <InputText placeholder='city' name='city' />
-          <InputText placeholder='country' name='country' />      
-        </div>
-
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'start',
-          gap: '10px'
-        }}>
-          <span style={{ display: 'block', width: '100px', textAlign:'end' }}>Gender</span>
-          <InputRadio id="male" name="gender" value="MALE" text="Male" />
-          <InputRadio id="female" name="gender" value="FEMALE" text="Female" />  
-        </div>
-
-        <button 
-          type="submit"
-          style={{
-            width: '100%',
-          }}
-        >
-            Create
-        </button>
+      <div >        
+        { 
+          idToUpdate 
+            ? <Update idPerson={idToUpdate} setIdToUpdate={setIdToUpdate} /> 
+            : <Create />
+        }
       </div>
 
       <hr />
       <div style={{ position: 'relative'}}>
         <h2 style={{ textAlign: 'start' }}>Grid</h2>
-        <GridPersons />
+        <GridPersons setIdToUpdate={setIdToUpdate} />
       </div>      
 
       <hr />

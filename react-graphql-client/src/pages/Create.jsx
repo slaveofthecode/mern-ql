@@ -1,7 +1,5 @@
 import { gql, useMutation } from '@apollo/client';
 import { useState } from 'react';
-import CardColumn from '../components/card/column';
-import ButtonPrimary from '../components/commons/buttons/primary';
 import InputRadio from '../components/commons/inputs/radio';
 import InputText from '../components/commons/inputs/text';
 
@@ -89,46 +87,60 @@ const Create = () => {
   const [ dataUpdated, setDataUpdated] = useState(null);
 
   return (
-    <>
-      <h2>Create</h2>
-        <form onSubmit={handleOnSubmit}>           
-            <div style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                justifyContent: 'space-between'
-            
-            }}>
-                <CardColumn title='Main data'>
-                    <InputText placeholder='name' name='name' />
-                    <InputText placeholder='age' name='age' />
-                    <InputText placeholder='email' name='email' />
-                </CardColumn>
-                
-                <CardColumn title='Address'>
-                    <InputText placeholder='street' name='street' />
-                    <InputText placeholder='city' name='city' />
-                    <InputText placeholder='country' name='country' />      
-                </CardColumn>
+    <form onSubmit={handleOnSubmit}>    
+        <h2 style={{ textAlign: 'start' }}>Create</h2>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'start',
+          gap: '10px'
+        }}>
+          <span style={{ display: 'block', width: '100px', textAlign:'end' }}>Main Data</span>
+          <InputText placeholder={'name'} name={'name'} />
+          <InputText placeholder={'age'} name={'age'} />
+          <InputText placeholder={'email'} name={'email'} />
+        </div>
 
-                <CardColumn title='Gender' >
-                    <div>
-                        <InputRadio id="male" name="gender" value="MALE" text="Male" />
-                        <InputRadio id="female" name="gender" value="FEMALE" text="Female" />            
-                    </div>
-                </CardColumn>
-            </div> 
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'start',
+          gap: '10px'
+        }}>
+          <span style={{ display: 'block', width: '100px', textAlign:'end' }}>Address</span>
+          <InputText placeholder='street' name='street' />
+          <InputText placeholder='city' name='city' />
+          <InputText placeholder='country' name='country' />      
+        </div>
 
-            
-          <ButtonPrimary text={ loading ? 'loading...' : 'Add '} />          
-          { error && <p> {error.message } </p>}
-          {
-            dataUpdated && ( () => {
-              setTimeout( () => { setDataUpdated(null); }, 5000);
-              return <p> { data.create.id } - { data.create.name } </p> 
-            } )()
-          }
-        </form>
-    </>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'start',
+          gap: '10px'
+        }}>
+          <span style={{ display: 'block', width: '100px', textAlign:'end' }}>Gender</span>
+          <InputRadio id="male" name="gender" value="MALE" text="Male" />
+          <InputRadio id="female" name="gender" value="FEMALE" text="Female" />  
+        </div>
+
+        <button 
+          type="submit"
+          style={{
+            width: '100%',
+          }}
+        >
+            { loading ? 'loading...' : 'Create'}            
+        </button>
+
+        { error && <p> {error.message } </p>}
+        {
+             dataUpdated && ( () => {
+               setTimeout( () => { setDataUpdated(null); }, 5000);
+               return <p> { data.create.id } - { data.create.name } </p> 
+             } )()
+        }
+    </form>
   );
 }
 

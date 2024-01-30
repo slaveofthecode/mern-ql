@@ -8,7 +8,7 @@ const InputRadio = ({ id, name, value, text}) => {
           type="radio" 
           id={id} 
           name={name} 
-          value={value} 
+          value={value}
         />
         <label htmlFor={id}>
           {text}

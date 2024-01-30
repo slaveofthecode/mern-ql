@@ -1,8 +1,10 @@
 /* eslint-disable react/prop-types */
 import { gql, useLazyQuery, useMutation } from '@apollo/client';
 import { useEffect, useState } from 'react';
+import InputText from '../components/commons/inputs/text';
 
 const Update = ({ idPerson, setIdToUpdate }) => {
+
     const queryGetById = gql`
     query($id: ID!) {
       getById(id: $id) {
@@ -107,22 +109,55 @@ const Update = ({ idPerson, setIdToUpdate }) => {
   }
 
   return (
-    <>
+    <div>
       <h2>Update</h2>
       {
         personToUpdate && (
           <>
-            <ol>
-              <li>name : <input value={personToUpdate?.name ?? ''} onChange={handleOnChangeUpdate} name='name' /></li>        
-              <li>age : <input value={personToUpdate?.age ?? ''} onChange={handleOnChangeUpdate} name='age' /></li>
-              <li>email : <input value={personToUpdate?.email ?? ''} onChange={handleOnChangeUpdate} name='email' /></li>                
-            </ol>
-            <button onClick={handleSaveUpdate} >✔</button>
-            <button onClick={handleOnClickCancelUpdate} >❌</button>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'start',
+              gap: '10px'
+            }}>
+              <span style={{ display: 'block', width: '100px', textAlign:'end' }}>Main Data</span>
+              <InputText
+                placeholder={'name'}
+                value={personToUpdate?.name ?? ''} 
+                onChange={handleOnChangeUpdate} 
+                name='name' 
+              />
+              <InputText 
+                placeholder={'age'}
+                value={personToUpdate?.age ?? ''} 
+                onChange={handleOnChangeUpdate} 
+                name='age' 
+              />
+              <InputText
+                placeholder={'email'} 
+                value={personToUpdate?.email ?? ''} 
+                onChange={handleOnChangeUpdate} 
+                name='email' 
+              />
+              <button 
+                style={{
+                  width: '50%'
+                }}
+                onClick={handleSaveUpdate} >
+                  ✔
+              </button>
+              <button 
+                style={{
+                  width: '50%'
+                }}
+                onClick={handleOnClickCancelUpdate} >
+                  ❌
+                </button>
+            </div>
           </>  
         )
       }
-    </>
+    </div>
   );
 }
 

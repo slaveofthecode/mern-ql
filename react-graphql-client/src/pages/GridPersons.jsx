@@ -1,8 +1,7 @@
+/* eslint-disable react/prop-types */
 import { gql, useMutation, useQuery } from '@apollo/client';
-import { useState } from 'react';
-import Update from './Update';
 
-const GridPersons = () => {
+const GridPersons = ({ setIdToUpdate }) => {
     const queryGetAll = gql`
     query {
       getAll {
@@ -46,15 +45,11 @@ const GridPersons = () => {
   }
   // --- REMOVE
 
-  
-  const [ idToUpdate, setIdToUpdate] = useState(null);
- 
-
   return (
     <>
       <small style={{
         position: 'absolute',
-        top: '0', 
+        top: '25px', 
         right: '0',
        }}>
         Total rows: ( {resultGetAll.data?.getAll.length} )
@@ -105,8 +100,7 @@ const GridPersons = () => {
               );
             })
           )
-        }
-        { idToUpdate && <Update idPerson={idToUpdate} setIdToUpdate={setIdToUpdate} /> }
+        }        
         
     </>
   );
