@@ -3,10 +3,9 @@ import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import './index.css';
 
-const GRAPHQL_URI = 'http://localhost:4000/';
-
+const uri = import.meta.env.VITE_GRAPHQL_URI;
 const client = new ApolloClient({
-  uri: GRAPHQL_URI,
+  uri,
   cache: new InMemoryCache()
 });
 

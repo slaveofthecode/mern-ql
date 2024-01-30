@@ -1,0 +1,12 @@
+.button-primary {
+    min-width: 100px;
+    margin: 5px;
+    outline: none;
+
+    &:hover {
+        border-color: rgba($color: #000000, $alpha: 1.0);
+    }
+    &:focus{
+        outline: none;
+    }
+}
